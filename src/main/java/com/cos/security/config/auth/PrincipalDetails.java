@@ -19,13 +19,23 @@ import lombok.Data;
 // User 객체 타입 -> UserDetails 타입
 
 // Security Session -> Authentication -> UserDetails(PrincipalDetails)
+// 함수 종료 시 @AuthenticationPrincipal 어노테이션 생성
 @Data
 public class PrincipalDetails implements UserDetails, OAuth2User {
 
 	private User user; // composition
 	
+	private Map<String, Object> attributes;
+	
+	// 일반 로그인
 	public PrincipalDetails(User user) {
 		this.user = user;
+	}
+	
+	// OAuth 로그인
+	public PrincipalDetails(User user, Map<String, Object> attributes) {
+		this.user = user;
+		this.attributes = attributes;
 	}
 	
 	// 해당 사용자의 권한 반환
@@ -76,13 +86,11 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 
 	@Override
 	public Map<String, Object> getAttributes() {
-		// TODO Auto-generated method stub
-		return null;
+		return attributes;
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

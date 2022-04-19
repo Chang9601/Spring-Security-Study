@@ -23,9 +23,12 @@ import com.cos.security.config.oauth.PrincipalOAuth2UserService;
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true) // secured 어노테이션 활성화, preAuthorize와 postAuthorize 어노테이션 활성화
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
-	@Autowired
-	private PrincipalOAuth2UserService principalOAuth2UserService;
+	private final PrincipalOAuth2UserService principalOAuth2UserService;
 	
+	@Autowired
+	public SecurityConfig(PrincipalOAuth2UserService principalOAuth2UserService) {
+		this.principalOAuth2UserService = principalOAuth2UserService;
+	}
 	
 	// 해당 메서드의 반환 객체를 IoC에 등록
 	@Bean

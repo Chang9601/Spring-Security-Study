@@ -24,6 +24,12 @@ public class IndexController {
 	
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	
+	@Autowired
+	public IndexController(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+		this.userRepository = userRepository;
+		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+	}
+	
 	@GetMapping("/test/login")
 	public @ResponseBody String testLogin(
 			Authentication authentication, 
@@ -47,12 +53,6 @@ public class IndexController {
 		
 		return "OAuth 세션 정보 확인";
 	}
-	
-	@Autowired
-	public IndexController(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
-		this.userRepository = userRepository;
-		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-	}
 
 	@GetMapping({"", "/"})
 	public String index() {
@@ -61,8 +61,11 @@ public class IndexController {
 		return "index"; // src/main/resources/templates/index.mustache
 	}
 	
+	// 일반 로그인, OAuth 로그인 둘 다 PrincipalDetails로 받을 수 있다.
 	@GetMapping("/user")
 	public @ResponseBody String user(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+		System.out.println("principalDetails: " + principalDetails.getUser());
+		
 		return "user";
 	}
 	
