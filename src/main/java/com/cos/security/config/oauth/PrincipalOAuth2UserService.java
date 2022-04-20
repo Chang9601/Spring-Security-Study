@@ -9,6 +9,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.cos.security.config.auth.PrincipalDetails;
+import com.cos.security.config.oauth.provider.FacebookUserInfo;
+import com.cos.security.config.oauth.provider.GoogleUserInfo;
+import com.cos.security.config.oauth.provider.OAuth2UserInfo;
 import com.cos.security.model.User;
 import com.cos.security.repository.UserRepository;
 
@@ -38,11 +41,23 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
 		System.out.println("getAttributes: " + oAuth2User.getAttributes());
 
 		// 회원가입 강제 진행
-		String provider = userRequest.getClientRegistration().getClientId(); // google
-		String providerId = oAuth2User.getAttribute("sub"); 
+		OAuth2UserInfo oAuth2UserInfo = null;
+		if(userRequest.getClientRegistration().getRegistrationId().equals("google")) {
+			System.out.println("구글 로그인");
+			oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
+		} else if(userRequest.getClientRegistration().getRegistrationId().equals("facebook")) {
+			System.out.println("페이스북 로그인");
+			oAuth2UserInfo = new FacebookUserInfo(oAuth2User.getAttributes());
+		} else {
+			System.out.println("구글과 페이스북만 지원");
+		}
+		
+		
+		String provider = oAuth2UserInfo.getProvider();
+		String providerId = oAuth2UserInfo.getProviderId(); 
 		String username = provider + "_" + providerId;  // google_...
 		String password = "겟인데어"; // bCryptPasswordEncoder.encode("겟인데어");
-		String email = oAuth2User.getAttribute("email");
+		String email = oAuth2UserInfo.getEmail();
 		String role = "ROLE_USER";
 		
 		User userEntity = userRepository.findByUsername(username);
